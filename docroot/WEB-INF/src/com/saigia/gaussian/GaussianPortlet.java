@@ -4,9 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,27 +12,19 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import javax.servlet.RequestDispatcher;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import retrofit.mime.TypedFile;
 
-import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.mail.MailMessage;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -113,7 +103,7 @@ public class GaussianPortlet extends MVCPortlet  {
 			ctr.input_files.add(new Input_files("", inputFileName, ""));
 			ctr.output_files.add(new Output_files("outputs.tar.gz",""));
 			
-			CreateTaskResponse ctResponse = Connection.apiService.createTask(user.getUserId() + "", ctr);
+			CreateTaskResponse ctResponse = Connection.apiService.createTask(user.getScreenName() + "", ctr);
 			
 			Map<String, TypedFile> files = new HashMap<String, TypedFile>();
 			

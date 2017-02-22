@@ -2,30 +2,22 @@ package com.saigia.gaussian;
 
 import java.util.Map;
 
-import okhttp3.RequestBody;
+//import retrofit.Call;
+import retrofit.RestAdapter;
+import retrofit.http.Body;
+import retrofit.http.GET;
+import retrofit.http.Multipart;
+import retrofit.http.POST;
+import retrofit.http.PartMap;
+import retrofit.http.Path;
+import retrofit.http.Query;
+import retrofit.mime.TypedFile;
 
 import com.saigia.gaussian.vo.CheckStatusResponse;
 import com.saigia.gaussian.vo.CreateTaskRequest;
 import com.saigia.gaussian.vo.CreateTaskResponse;
 import com.saigia.gaussian.vo.UploadFilesResponse;
-
-
-
-
-
-//import retrofit.Call;
-import retrofit.RestAdapter;
 //import retrofit.Retrofit;
-import retrofit.client.OkClient;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.Multipart;
-import retrofit.http.POST;
-import retrofit.http.Part;
-import retrofit.http.PartMap;
-import retrofit.http.Path;
-import retrofit.http.Query;
-import retrofit.mime.TypedFile;
 
 public interface Connection {
 
