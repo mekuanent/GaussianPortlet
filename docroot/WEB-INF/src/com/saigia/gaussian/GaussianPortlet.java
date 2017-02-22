@@ -1,12 +1,16 @@
 package com.saigia.gaussian;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +73,6 @@ public class GaussianPortlet extends MVCPortlet  {
 			}
 
 			String sourceFileName = uploadRequest.getFileName("fileName");
-			String fileS = uploadRequest.getFile("fileName").getAbsolutePath();
 
 			logger.info("Nome file:" + uploadRequest.getFileName("fileName"));
 			String newFileS = folder + sourceFileName;
@@ -78,27 +81,29 @@ public class GaussianPortlet extends MVCPortlet  {
 
 			logger.info("New file path: " + newFileS);
 
-			
+			String inputFileName = user.getUserId() + sourceFileName;
 			
 			InputStream in = new BufferedInputStream(uploadRequest.getFileAsStream("fileName"));
-			FileInputStream fis = new FileInputStream(fileS);
 
-
-			byte[] bytes_ = FileUtil.getBytes(in);
-			int i = fis.read(bytes_);
-
-			while (i != -1) {
-				i = fis.read(bytes_);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			File newFile = new File(uploadRequest.getFile("fileName").getParent() + "/" + inputFileName);
+			String line = null;
 			
+			FileWriter fw = new FileWriter(newFile, true);
+			BufferedWriter bw = new BufferedWriter(fw);;
+			
+			while((line = reader.readLine()) != null){
+				
+				if(!line.contains("%chk="))
+					bw.write(line + "\n");
+				
 			}
-			fis.close();
 			
-			final byte[] fileBytes = bytes_;
+			bw.close();
 			
 			//sendMail();
 			logger.info("UserId: " + user.getUserId());
 			
-			String inputFileName = user.getUserId() + sourceFileName;
 			
 			CreateTaskRequest ctr = new CreateTaskRequest();
 			ctr.application = "3";
@@ -109,15 +114,6 @@ public class GaussianPortlet extends MVCPortlet  {
 			ctr.output_files.add(new Output_files("outputs.tar.gz",""));
 			
 			CreateTaskResponse ctResponse = Connection.apiService.createTask(user.getUserId() + "", ctr);
-
-			File newFile = new File(uploadRequest.getFile("fileName").getParent() + "/" + inputFileName);
-			uploadRequest.getFile("fileName").renameTo(newFile);
-			
-			
-			MediaType mediaType = MediaType.parse("text/plain");
-			RequestBody requestBody = RequestBody.create(mediaType, fileBytes);
-			
-			
 			
 			Map<String, TypedFile> files = new HashMap<String, TypedFile>();
 			
@@ -161,34 +157,16 @@ public class GaussianPortlet extends MVCPortlet  {
 			System.out.println("File Not Found");
 			e.printStackTrace();
 			SessionMessages.add(actionRequest, "error");
-		}
-
-		catch (IOException e1) {
+		} catch (IOException e1) {
 			System.out.println("Error Reading The File.");
 			SessionMessages.add(actionRequest, "error");
 			e1.printStackTrace();
+		} catch (Exception e){
+			System.out.println("General Error" + e.getMessage());
+			SessionMessages.add(actionRequest, "error");
+			e.printStackTrace();
 		}
 
 	}
-
-	public void sendMail() {
-		InternetAddress fromAddress = null;
-		InternetAddress toAddress = null;
-		try {
-			fromAddress = new InternetAddress("mekuanent@hotmail.com");
-			toAddress = new InternetAddress("mekuanent@hotmail.com");
-			MailMessage mailMessage = new MailMessage();
-			mailMessage.setTo(toAddress);
-			mailMessage.setFrom(fromAddress);
-			mailMessage.setSubject("Task Finished");
-			mailMessage.setBody("Your output is ready to download. Please use this this link, or go to the portal to download.");
-			MailServiceUtil.sendEmail(mailMessage);
-			System.out.println("Send mail with Plain Text");
-		} catch (AddressException e) {
-			e.printStackTrace();
-		} 
-
-	} 
-
 
 }
