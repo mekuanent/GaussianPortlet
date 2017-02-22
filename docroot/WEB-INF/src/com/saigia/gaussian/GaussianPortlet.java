@@ -15,6 +15,9 @@ import javax.mail.internet.InternetAddress;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+import javax.servlet.RequestDispatcher;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -32,6 +35,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.util.bridges.mvc.MVCPortlet;
 import com.saigia.gaussian.vo.CreateTaskRequest;
 import com.saigia.gaussian.vo.CreateTaskResponse;
@@ -42,7 +46,7 @@ import com.saigia.gaussian.vo.UploadFilesResponse;
 public class GaussianPortlet extends MVCPortlet  {
 
 	public void uploadCase(ActionRequest actionRequest,
-			ActionResponse actionRresponse) throws PortletException,
+			ActionResponse actionResponse) throws PortletException,
 			IOException {
 		ThemeDisplay td  =(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		final User user = td.getUser();
@@ -138,8 +142,17 @@ public class GaussianPortlet extends MVCPortlet  {
 			
 			logger.info("CALLER INFO: upload task finished with status = " + ufResponse.getTask());
 			
-			SessionMessages.add(actionRequest, "success");
+			
 
+			String portletName = (String)actionRequest.getAttribute(WebKeys.PORTLET_ID);
+			ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			
+			PortletURL redirectURL = PortletURLFactoryUtil.create(PortalUtil.getHttpServletRequest(actionRequest), portletName, themeDisplay.getLayout().getPlid(), PortletRequest.RENDER_PHASE);
+					 redirectURL.setParameter("jspPage", "/confirmation.jsp");
+					
+			actionResponse.sendRedirect(redirectURL.toString()); 
+			
+			
 		} catch (FileNotFoundException e) {
 			System.out.println("File Not Found.");
 			e.printStackTrace();
