@@ -1,0 +1,1 @@
+create index IX_7CE427C8 on LS_UserTask (userId);

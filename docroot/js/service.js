@@ -1,0 +1,1 @@
+Liferay.Service.register("Liferay.Service.LS", "com.saigia.gaussian.service", "ScaigiaGaussian-portlet");
